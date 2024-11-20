@@ -12,7 +12,6 @@ public class Fecha implements Comparable {
     private int mes;
     private int año;
 
-    // Arreglo con los días de cada mes para validación
     private static final int[] DIAS_POR_MES = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
     public Fecha() {
@@ -40,6 +39,25 @@ public class Fecha implements Comparable {
      * @return Retorna verdadero si la fecha es valida.
      */
     public static boolean esFechaValida(int dia, int mes, int año) {
+        if (mes < 1 || mes > 12) {
+            return false;
+        }
+        int diasMaximos = DIAS_POR_MES[mes - 1];
+
+        // Ajustar febrero para años bisiestos
+        if (mes == 2 && esBisiesto(año)) {
+            diasMaximos = 29;
+        }
+
+        return dia >= 1 && dia <= diasMaximos;
+    }
+
+    /**
+     * Verifica que una fecha sea valida.
+     *
+     * @return Retorna verdadero si la fecha es valida.
+     */
+    public boolean esFechaValida() {
         if (mes < 1 || mes > 12) {
             return false;
         }

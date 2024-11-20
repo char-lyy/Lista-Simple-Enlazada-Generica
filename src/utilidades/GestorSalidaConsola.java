@@ -59,8 +59,9 @@ public class GestorSalidaConsola {
      * atributos.
      * @param LIMITE_CARACTERES_LINEA_CONSOLA la longitud máxima de caracteres
      * por línea en la consola.
+     * @return los titulos de la clase en formato tabla por consola
      */
-    public static void generarTitulosColumnas(Class<?> aClass, int LIMITE_CARACTERES_LINEA_CONSOLA) {
+    public static String generarTitulosColumnas(Class<?> aClass, int LIMITE_CARACTERES_LINEA_CONSOLA) {
         // Obtener los atributos no constantes
         Field[] fields = obtenerAtributosNoConstantes(aClass);
         int cantidadAtributos = fields.length;
@@ -88,6 +89,8 @@ public class GestorSalidaConsola {
         }
 
         System.out.println(salida.toString());
+        
+        return salida.toString();
     }
 
     /**
@@ -100,8 +103,9 @@ public class GestorSalidaConsola {
      * atributos.
      * @param LIMITE_CARACTERES_LINEA_CONSOLA la longitud máxima de caracteres
      * por línea en la consola.
+     * @return los datos de la instancia en formato tabulado.
      */
-    public static void mostrarTabulado(Class<?> aClass, Object instancia, int LIMITE_CARACTERES_LINEA_CONSOLA) {
+    public static String mostrarTabulado(Class<?> aClass, Object instancia, int LIMITE_CARACTERES_LINEA_CONSOLA) {
         // Obtener los atributos no constantes
         Field[] fields = obtenerAtributosNoConstantes(aClass);
         int cantidadAtributos = fields.length;
@@ -137,6 +141,8 @@ public class GestorSalidaConsola {
 
         // Mostrar en pantalla el string resultante
         System.out.println(salida.toString());
+        
+        return salida.toString();
     }
 
     /**
@@ -147,7 +153,7 @@ public class GestorSalidaConsola {
      * @return un arreglo de objetos {@link Field} representando los atributos
      * no constantes de la clase.
      */
-    public static Field[] obtenerAtributosNoConstantes(Class<?> aClass) {
+    private static Field[] obtenerAtributosNoConstantes(Class<?> aClass) {
         List<Field> nonConstantFields = new ArrayList<>();
 
         while (aClass != null && aClass != Object.class) {
