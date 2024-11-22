@@ -4,6 +4,8 @@ import java.sql.Date;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.Period;
+
 import utilidades.GestorEntradaConsola;
 
 public class Fecha implements Comparable {
@@ -12,6 +14,7 @@ public class Fecha implements Comparable {
     private int mes;
     private int año;
 
+    // Arreglo que contiene los dias por mes de cada mes.
     private static final int[] DIAS_POR_MES = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
     public Fecha() {
@@ -30,6 +33,95 @@ public class Fecha implements Comparable {
         }
     }
 
+    @Override
+    public int compareTo(Object o) {
+        Fecha otraFecha = (Fecha) o;
+        if (this.año != otraFecha.año) {
+            return this.año - otraFecha.año;
+        } else if (this.mes != otraFecha.mes) {
+            return this.mes - otraFecha.mes;
+        } else {
+            return this.dia - otraFecha.dia;
+        }
+    }
+
+    // ******* METODOS DE CARGA DE DATOS POR CONSOLA *******
+    /**
+     * Valida que la fecha sea correcta luego de cargar por separado el dia, el
+     * mes y el año.
+     *
+     * @return verdadero si se valida la fecha.
+     */
+    public Fecha cargarDatos() {
+
+        int diaEntrante, mesEntrante, añoEntrante;
+
+        do {
+            añoEntrante = cargarAño();
+            mesEntrante = cargarMes();
+            diaEntrante = cargarDia();
+            if (!esFechaValida(diaEntrante, mesEntrante, añoEntrante)) {
+                System.out.println("Fecha invalida! Ingrese nuevamente");
+                GestorEntradaConsola.pausar();
+            }
+        } while (!esFechaValida(diaEntrante, mesEntrante, añoEntrante));
+
+        this.dia = diaEntrante;
+        this.mes = mesEntrante;
+        this.año = añoEntrante;
+
+        return this;
+    }
+
+    /**
+     * Valida que la fecha sea mayor a 0 y menor a 31.
+     *
+     * @return verdadero si se valida la fecha.
+     */
+    public int cargarDia() {
+        int diaEntrante;
+        boolean esValido;
+        do {
+            System.out.print("Dia: ");
+            diaEntrante = GestorEntradaConsola.leerEntero();
+            esValido = diaEntrante > 0 && diaEntrante <= 31;
+        } while (!esValido);
+        return diaEntrante;
+    }
+
+    /**
+     * Valida que el mes sea mayor a 0 y menor que 13
+     *
+     * @return verdadero si se valida el mes.
+     */
+    public int cargarMes() {
+        int mesEntrante;
+        boolean esValido;
+        do {
+            System.out.print("Mes: ");
+            mesEntrante = GestorEntradaConsola.leerEntero();
+            esValido = mesEntrante >= 1 && mesEntrante <= 12;
+        } while (!esValido);
+        return mesEntrante;
+    }
+
+    /**
+     * Valida que el año sea mayor a 1970
+     *
+     * @return verdadero si se valida el año
+     */
+    public int cargarAño() {
+        int añoEntrante;
+        boolean esValido;
+        do {
+            System.out.print("Año: ");
+            añoEntrante = GestorEntradaConsola.leerEntero();
+            esValido = añoEntrante >= 1970;
+        } while (!esValido);
+        return añoEntrante;
+    }
+
+    // ******* VALIDACION DE FECHAS *******
     /**
      * Verifica que una fecha sea valida.
      *
@@ -81,42 +173,7 @@ public class Fecha implements Comparable {
         return (año % 4 == 0 && año % 100 != 0) || (año % 400 == 0);
     }
 
-    public int getDia() {
-        return dia;
-    }
-
-    public void setDia(int dia) {
-        if (esFechaValida(dia, this.mes, this.año)) {
-            this.dia = dia;
-        } else {
-            throw new IllegalArgumentException("Día inválido.");
-        }
-    }
-
-    public int getMes() {
-        return mes;
-    }
-
-    public void setMes(int mes) {
-        if (esFechaValida(this.dia, mes, this.año)) {
-            this.mes = mes;
-        } else {
-            throw new IllegalArgumentException("Mes inválido.");
-        }
-    }
-
-    public int getAño() {
-        return año;
-    }
-
-    public void setAño(int año) {
-        if (esFechaValida(this.dia, this.mes, año)) {
-            this.año = año;
-        } else {
-            throw new IllegalArgumentException("Año inválido.");
-        }
-    }
-
+    // ******* CALCULOS DE FECHAS *******
     /**
      * Método para sumar días a la fecha.
      *
@@ -160,101 +217,40 @@ public class Fecha implements Comparable {
         }
         this.dia = 1;
     }
+    
+    /**
+     * Calcula el dia de la semana de una fecha
+     *
+     * @return el dia de la semana de una fecha.
+     */
+    public DayOfWeek getDiaSemana() {
+        LocalDate localDate = LocalDate.of(año, mes, dia);
+        return localDate.getDayOfWeek();
+    }
 
     /**
      * Muestra en formato yyyy-mm-dd
      */
+    // ******* toString ********
     @Override
     public String toString() {
         LocalDate localDate = LocalDate.of(año, mes, dia);
         return localDate.toString();
     }
 
-    @Override
-    public int compareTo(Object o) {
-        Fecha otraFecha = (Fecha) o;
-        if (this.año != otraFecha.año) {
-            return this.año - otraFecha.año;
-        } else if (this.mes != otraFecha.mes) {
-            return this.mes - otraFecha.mes;
-        } else {
-            return this.dia - otraFecha.dia;
-        }
-    }
-
+    // ******* CONVERSORES A OTROS TIPOS DE GESTORES DE FECHA *******
+    // Nota: actualmente, el utilizado es LocalDate. sql.Date se utiliza
+    // para gestionde bases de datos sql, mientras que util.Date esta en 
+    // desuso, aunque puede encontrarse en alguna que otra aplicacion legacy.
     /**
-     * Valida que la fecha sea correcta luego de cargar por separado el dia, el
-     * mes y el año.
+     * Convierte una instancia de java.sql.Date en una instancia de FechaDTO.
      *
-     * @return verdadero si se valida la fecha.
+     * @param sqlDate Una fecha de tipo java.sql.Date.
+     * @return Una instancia de FechaDTO que representa la misma fecha.
      */
-    public Fecha cargarDatos() {
-
-        int diaEntrante, mesEntrante, añoEntrante;
-
-        do {
-            añoEntrante = cargarAño();
-            mesEntrante = cargarMes();
-            diaEntrante = cargarDia();
-            if (!esFechaValida(diaEntrante, mesEntrante, añoEntrante)) {
-                System.out.println("Fecha invalida! Ingrese nuevamente");
-                GestorEntradaConsola.pausar();
-            }
-        } while (!esFechaValida(diaEntrante, mesEntrante, añoEntrante));
-
-        this.dia = diaEntrante;
-        this.mes = mesEntrante;
-        this.año = añoEntrante;
-
-        return this;
-    }
-
-    /**
-     * Valida que la fecha sea mayor a 0 y menor a 31.
-     *
-     * @return verdadero si se valida la fecha.
-     */
-    private int cargarDia() {
-        int diaEntrante;
-        boolean esValido;
-        do {
-            System.out.print("Dia: ");
-            diaEntrante = GestorEntradaConsola.leerEntero();
-            esValido = diaEntrante > 0 && diaEntrante <= 31;
-        } while (!esValido);
-        return diaEntrante;
-    }
-
-    /**
-     * Valida que el mes sea mayor a 0 y menor que 13
-     *
-     * @return verdadero si se valida el mes.
-     */
-    private int cargarMes() {
-        int mesEntrante;
-        boolean esValido;
-        do {
-            System.out.print("Mes: ");
-            mesEntrante = GestorEntradaConsola.leerEntero();
-            esValido = mesEntrante >= 1 && mesEntrante <= 12;
-        } while (!esValido);
-        return mesEntrante;
-    }
-
-    /**
-     * Valida que el año sea mayor a 1970
-     *
-     * @return verdadero si se valida el año
-     */
-    private int cargarAño() {
-        int añoEntrante;
-        boolean esValido;
-        do {
-            System.out.print("Año: ");
-            añoEntrante = GestorEntradaConsola.leerEntero();
-            esValido = añoEntrante >= 1970;
-        } while (!esValido);
-        return añoEntrante;
+    public static Fecha fromSqlDate(Date sqlDate) {
+        LocalDate localDate = sqlDate.toLocalDate();
+        return new Fecha(localDate.getDayOfMonth(), localDate.getMonthValue(), localDate.getYear());
     }
 
     /**
@@ -265,17 +261,6 @@ public class Fecha implements Comparable {
     public Date toSqlDate() {
         LocalDate localDate = LocalDate.of(this.año, this.mes, this.dia);
         return Date.valueOf(localDate);
-    }
-
-    /**
-     * Convierte una instancia de java.sql.Date en una instancia de FechaDTO.
-     *
-     * @param sqlDate Una fecha de tipo java.sql.Date.
-     * @return Una instancia de FechaDTO que representa la misma fecha.
-     */
-    public static Fecha fromSqlDate(Date sqlDate) {
-        LocalDate localDate = sqlDate.toLocalDate();
-        return new Fecha(localDate.getDayOfMonth(), localDate.getMonthValue(), localDate.getYear());
     }
 
     public static Fecha fromUtilDate(java.util.Date utilDate) {
@@ -300,22 +285,48 @@ public class Fecha implements Comparable {
         return java.util.Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 
-    public LocalDate toLocalDate() {
-        return LocalDate.of(año, mes, dia);
-    }
-
     public static Fecha fromLocalDate(LocalDate localDate) {
         return new Fecha(localDate.getDayOfMonth(), localDate.getMonthValue(), localDate.getYear());
     }
 
-    /**
-     * Calcula el dia de la semana de una fecha
-     *
-     * @return el dia de la semana de una fecha.
-     */
-    public DayOfWeek getDiaSemana() {
-        LocalDate localDate = LocalDate.of(año, mes, dia);
-        return localDate.getDayOfWeek();
+    public LocalDate toLocalDate() {
+        return LocalDate.of(año, mes, dia);
     }
 
+    // ******* GETTERS Y SETTERS *******
+    public int getDia() {
+        return dia;
+    }
+
+    public void setDia(int dia) {
+        if (esFechaValida(dia, this.mes, this.año)) {
+            this.dia = dia;
+        } else {
+            throw new IllegalArgumentException("Día inválido.");
+        }
+    }
+
+    public int getMes() {
+        return mes;
+    }
+
+    public void setMes(int mes) {
+        if (esFechaValida(this.dia, mes, this.año)) {
+            this.mes = mes;
+        } else {
+            throw new IllegalArgumentException("Mes inválido.");
+        }
+    }
+
+    public int getAño() {
+        return año;
+    }
+
+    public void setAño(int año) {
+        if (esFechaValida(this.dia, this.mes, año)) {
+            this.año = año;
+        } else {
+            throw new IllegalArgumentException("Año inválido.");
+        }
+    }
 }

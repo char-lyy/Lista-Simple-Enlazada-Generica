@@ -1,5 +1,6 @@
 package entidades;
 
+import java.time.LocalDate;
 import utilidades.GestorEntradaConsola;
 
 /**
@@ -179,8 +180,20 @@ public class Persona implements Comparable {
                     System.out.println("Opción no válida. Intente de nuevo.");
             }
         } while (!confirmar);
-        
+
         System.out.println("Datos actualizados!");
+    }
+
+    /**
+     * Calcula la edad de una persona en base a su año de nacimiento
+     *
+     * @return la diferencia entre el año actual y el año de nacimiento de esta
+     * persona
+     */
+    public int calcularEdad() {
+        Fecha fechaActual = new Fecha();
+        fechaActual = Fecha.fromLocalDate(LocalDate.now());
+        return fechaActual.getAño() - fechaNacimiento.getAño();
     }
 
     public long getDni() {

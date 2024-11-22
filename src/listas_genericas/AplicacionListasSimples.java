@@ -21,13 +21,13 @@ public class AplicacionListasSimples {
 
     void cargarCasosDePrueba() {
 
-        Persona p1 = new Persona(12345678, "Juan Perez", "10x5 Siglo XX", new Fecha(15, 3, 1990));
+        Persona p1 = new Persona(12345678, "Juan Perez", "10x5 Siglo XX", new Fecha(15, 3, 2008));
         Persona p2 = new Persona(87654321, "Maria Gomez", "3x9 Siglo XIX", new Fecha(25, 7, 1985));
-        Persona p3 = new Persona(45678912, "Carlos Lopez", "Ax8 Vinalar", new Fecha(5, 11, 1993));
+        Persona p3 = new Persona(45678912, "Carlos Lopez", "Ax8 Vinalar", new Fecha(5, 11, 2006));
         Persona p4 = new Persona(98765432, "Ana Martinez", "20x32 Siglo XXI", new Fecha(30, 1, 1995));
         Persona p5 = new Persona(34567891, "Lucia Fernandez", "Av. Belgrano 1654", new Fecha(12, 6, 1998));
         Persona p6 = new Persona(65432198, "Pedro Garcia", "Guemes 333", new Fecha(8, 4, 1980));
-        Persona p7 = new Persona(56789123, "Sofia Ruiz", "Japon 125", new Fecha(20, 10, 2000));
+        Persona p7 = new Persona(56789123, "Sofia Ruiz", "Japon 125", new Fecha(20, 10, 2009));
 
         listaPersonas.insertarFrente(p1);
         listaPersonas.insertarFrente(p2);
@@ -59,6 +59,9 @@ public class AplicacionListasSimples {
                 case 5:
                     eliminarPersonas();
                     break;
+                case 6:
+                    listarPersonasMayores18();
+                    break;
             }
         } while (opcion != 0);
     }
@@ -70,6 +73,7 @@ public class AplicacionListasSimples {
         System.out.println("3. Listar personas (Formato tabla)");
         System.out.println("4. Actualizar persona");
         System.out.println("5. Eliminar persona");
+        System.out.println("6. Listar personas con edad mayor o igual a 18");
         System.out.println("0. Salir");
     }
 
@@ -141,6 +145,22 @@ public class AplicacionListasSimples {
             }
 
         } while (GestorEntradaConsola.confirmar());
+    }
+
+    void listarPersonasMayores18() {
+
+        NodoSimple<Persona> nodoActual = listaPersonas.getPrimero();
+
+        while (nodoActual != null) {
+
+            int edad = nodoActual.getDato().calcularEdad();
+            boolean esMayor = edad >= 18;
+            if (esMayor) {
+                System.out.println(nodoActual.getDato().toString());
+            }
+            nodoActual = nodoActual.getSiguiente();
+        }
+
     }
 
     public static void main(String[] args) {
