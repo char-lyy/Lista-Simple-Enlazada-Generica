@@ -191,8 +191,7 @@ public class Persona implements Comparable {
      * persona
      */
     public int calcularEdad() {
-        Fecha fechaActual = new Fecha();
-        fechaActual = Fecha.fromLocalDate(LocalDate.now());
+        Fecha fechaActual = Fecha.fromLocalDate(LocalDate.now());
         return fechaActual.getAño() - fechaNacimiento.getAño();
     }
 

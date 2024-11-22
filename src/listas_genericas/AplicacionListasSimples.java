@@ -13,7 +13,7 @@ import utilidades.GestorSalidaConsola;
 public class AplicacionListasSimples {
 
     private static final int LIMITES_CARACTER_CONSOLA = 120;
-    private ListaSimple listaPersonas;
+    private ListaSimple<Persona> listaPersonas;
 
     void inicializar() {
         listaPersonas = new ListaSimple();
